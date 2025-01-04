@@ -24,11 +24,12 @@ resource "yandex_function_iam_binding" "cloud_func_publicity" {
 }
 
 resource "yandex_function" "cloud_func" {
-  name       = "function-homework-1"
-  user_hash  = archive_file.code_zip.output_sha256
-  runtime    = "python312"
-  entrypoint = "index.handler"
-  memory     = 128
+  name        = "function-homework-1"
+  user_hash   = archive_file.code_zip.output_sha256
+  runtime     = "python312"
+  entrypoint  = "index.handler"
+  memory      = 128
+  environment = { "TELEGRAM_BOT_TOKEN" = var.tg_bot_key }
   content {
     zip_filename = archive_file.code_zip.output_path
   }
@@ -42,4 +43,13 @@ resource "archive_file" "code_zip" {
 
 output "function_url" {
   value = "https://functions.yandexcloud.net/${yandex_function.cloud_func.id}"
+}
+
+variable "tg_bot_key" {
+  type        = string
+  description = "Telegram Bot Key"
+}
+
+data "http" "set_webhook_tg" {
+  url = "https://api.telegram.org/bot${var.tg_bot_key}/setWebhook?url=https://functions.yandexcloud.net/${yandex_function.cloud_func.id}"
 }
