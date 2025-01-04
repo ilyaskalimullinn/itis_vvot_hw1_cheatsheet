@@ -13,6 +13,7 @@ HELP_TEXT = (
     "Пришлите мне фотографию с вопросом или наберите его текстом."
 )
 MESSAGE_TYPE_ERROR_TEXT = "Я могу обработать только текстовое сообщение или фотографию."
+PHOTO_LENGTH_ERROR_TEXT = "Я могу обработать только одну фотографию."
 
 
 def send_message(text, message):
@@ -44,11 +45,6 @@ def handler(event, context):
 
     message_in = update["message"]
 
-    # If both text and image then error
-    if "text" in message_in and "photo" in message_in:
-        send_message(MESSAGE_TYPE_ERROR_TEXT, message_in)
-        return DEFAULT_RESPONSE
-
     # If only text
     if "text" in message_in:
         # TODO text logic
@@ -57,6 +53,11 @@ def handler(event, context):
 
     # If only images
     if "photo" in message_in:
+        # If multiple photos
+        if "media_group_id" in message_in:
+            send_message(PHOTO_LENGTH_ERROR_TEXT, message_in)
+            return DEFAULT_RESPONSE
+
         # TODO image logic
         send_message(f"You sent {len(message_in['photo'])} photos", message_in)
         return DEFAULT_RESPONSE
