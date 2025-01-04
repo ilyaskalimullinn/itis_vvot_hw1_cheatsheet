@@ -1,3 +1,10 @@
+locals {
+  cloud_id = "b1g71e95h51okii30p25"
+  folder_id = "b1g9896fnt23hf2ohrrp"
+  service_account_id = "ajef60r9ud57s8un41b1"
+  bucket = "c4ad8ab88294a95b3b2e4049829b761"
+}
+
 terraform {
   required_providers {
     yandex = {
@@ -8,8 +15,8 @@ terraform {
 }
 
 provider "yandex" {
-  cloud_id                 = "b1g71e95h51okii30p25"
-  folder_id                = "b1g9896fnt23hf2ohrrp"
+  cloud_id                 = local.cloud_id
+  folder_id                = local.folder_id
   service_account_key_file = pathexpand("~/.yc-keys/key.json")
   zone                     = "ru-central1-d"
 }
@@ -33,7 +40,7 @@ resource "yandex_function" "cloud_func" {
   content {
     zip_filename = archive_file.code_zip.output_path
   }
-  service_account_id = "ajef60r9ud57s8un41b1"
+  service_account_id = local.service_account_id
   mounts {
     name = "mnt"
     mode = "rw"
@@ -64,7 +71,7 @@ data "http" "set_webhook_tg" {
 }
 
 resource "yandex_storage_bucket" "bucket" {
-  bucket = "c4ad8ab88294a95b3b2e4049829b761"
+  bucket = local.bucket
 }
 
 resource "yandex_storage_object" "llm_request_body" {
