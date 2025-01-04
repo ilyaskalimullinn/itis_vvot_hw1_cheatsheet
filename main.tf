@@ -33,6 +33,14 @@ resource "yandex_function" "cloud_func" {
   content {
     zip_filename = archive_file.code_zip.output_path
   }
+  service_account_id = "ajef60r9ud57s8un41b1"
+  mounts {
+    name = "mnt"
+    mode = "rw"
+    object_storage {
+      bucket = yandex_storage_bucket.bucket.bucket
+    }
+  }
 }
 
 resource "archive_file" "code_zip" {
@@ -48,8 +56,19 @@ output "function_url" {
 variable "tg_bot_key" {
   type        = string
   description = "Telegram Bot Key"
+  sensitive   = true
 }
 
 data "http" "set_webhook_tg" {
   url = "https://api.telegram.org/bot${var.tg_bot_key}/setWebhook?url=https://functions.yandexcloud.net/${yandex_function.cloud_func.id}"
+}
+
+resource "yandex_storage_bucket" "bucket" {
+  bucket = "c4ad8ab88294a95b3b2e4049829b761"
+}
+
+resource "yandex_storage_object" "llm_request_body" {
+  bucket = yandex_storage_bucket.bucket.id
+  key = "llm_request_body.json"
+  source = "llm_request_body.json"
 }

@@ -32,6 +32,13 @@ def send_message(text, message):
 def handler(event, context):
     """Обработчик облачной функции. Реализует Webhook для Telegram Bot."""
 
+    try:
+        file_body = open("/function/storage/mnt/llm_request_body.json").read()
+        request_body = json.loads(file_body)
+        print(json.dumps(request_body, indent=4))
+    except Exception as e:
+        print(e)
+
     # Logging
     print(event)
 
