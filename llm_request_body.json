@@ -1,5 +1,5 @@
 {
-    "modelUri": "gpt://{catalog_id}/yandexgpt-lite",
+    "modelUri": "gpt://{folder_id}/yandexgpt-lite",
     "completionOptions": {
         "stream": false,
         "temperature": 0.1,
@@ -8,11 +8,7 @@
     "messages": [
         {
             "role": "system",
-            "text": "Ты специалист по дисциплине 'Операционные системы'. Ответь на экзаменационный вопрос."
-        },
-        {
-            "role": "user",
-            "text": "To be, or not to be: that is the question."
+            "text": "Ты специалист по предмету 'Операционные системы'. Ответь на экзаменационный вопрос."
         }
     ]
 }

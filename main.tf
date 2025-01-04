@@ -36,7 +36,8 @@ resource "yandex_function" "cloud_func" {
   runtime     = "python312"
   entrypoint  = "index.handler"
   memory      = 128
-  environment = { "TELEGRAM_BOT_TOKEN" = var.tg_bot_key }
+  execution_timeout  = "10"
+  environment = { "TELEGRAM_BOT_TOKEN" = var.tg_bot_key, "SERVICE_ACCOUNT_API_KEY" = yandex_iam_service_account_api_key.sa_api_key.secret_key, "FOLDER_ID" = local.folder_id }
   content {
     zip_filename = archive_file.code_zip.output_path
   }
@@ -78,4 +79,10 @@ resource "yandex_storage_object" "llm_request_body" {
   bucket = yandex_storage_bucket.bucket.id
   key = "llm_request_body.json"
   source = "llm_request_body.json"
+  source_hash = filemd5("llm_request_body.json")
+}
+
+resource "yandex_iam_service_account_api_key" "sa_api_key" {
+  service_account_id = local.service_account_id
+  description        = "this API-key is for my-robot"
 }
