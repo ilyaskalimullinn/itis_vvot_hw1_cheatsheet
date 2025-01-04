@@ -82,6 +82,13 @@ resource "yandex_storage_object" "llm_request_body" {
   source_hash = filemd5("llm_request_body.json")
 }
 
+resource "yandex_storage_object" "ocr_request_body" {
+  bucket = yandex_storage_bucket.bucket.id
+  key = "ocr_request_body.json"
+  source = "ocr_request_body.json"
+  source_hash = filemd5("ocr_request_body.json")
+}
+
 resource "yandex_iam_service_account_api_key" "sa_api_key" {
   service_account_id = local.service_account_id
   description        = "this API-key is for my-robot"
