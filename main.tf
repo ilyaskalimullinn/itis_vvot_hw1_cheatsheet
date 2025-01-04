@@ -1,8 +1,14 @@
 locals {
-  cloud_id = "b1g71e95h51okii30p25"
-  folder_id = "b1g9896fnt23hf2ohrrp"
   service_account_id = "ajef60r9ud57s8un41b1"
   bucket = "c4ad8ab88294a95b3b2e4049829b761"
+}
+
+variable "cloud_id" {
+  type = string
+}
+
+variable "folder_id" {
+  type = string
 }
 
 terraform {
@@ -15,8 +21,8 @@ terraform {
 }
 
 provider "yandex" {
-  cloud_id                 = local.cloud_id
-  folder_id                = local.folder_id
+  cloud_id                 = var.cloud_id
+  folder_id                = var.folder_id
   service_account_key_file = pathexpand("~/.yc-keys/key.json")
   zone                     = "ru-central1-d"
 }
@@ -37,7 +43,7 @@ resource "yandex_function" "cloud_func" {
   entrypoint  = "index.handler"
   memory      = 128
   execution_timeout  = "10"
-  environment = { "TELEGRAM_BOT_TOKEN" = var.tg_bot_key, "SERVICE_ACCOUNT_API_KEY" = yandex_iam_service_account_api_key.sa_api_key.secret_key, "FOLDER_ID" = local.folder_id }
+  environment = { "TELEGRAM_BOT_TOKEN" = var.tg_bot_key, "SERVICE_ACCOUNT_API_KEY" = yandex_iam_service_account_api_key.sa_api_key.secret_key, "FOLDER_ID" = var.folder_id }
   content {
     zip_filename = archive_file.code_zip.output_path
   }
