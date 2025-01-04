@@ -16,6 +16,9 @@ terraform {
     yandex = {
       source = "yandex-cloud/yandex"
     }
+    telegram = {
+      source = "yi-jiayu/telegram"
+    }
   }
   required_version = ">= 0.13"
 }
@@ -25,6 +28,10 @@ provider "yandex" {
   folder_id                = var.folder_id
   service_account_key_file = pathexpand("~/.yc-keys/key.json")
   zone                     = "ru-central1-d"
+}
+
+provider "telegram" {
+  bot_token = var.tg_bot_key
 }
 
 resource "yandex_function_iam_binding" "cloud_func_publicity" {
@@ -73,7 +80,7 @@ variable "tg_bot_key" {
   sensitive   = true
 }
 
-data "http" "set_webhook_tg" {
+resource "telegram_bot_webhook" "tg_webhook" {
   url = "https://api.telegram.org/bot${var.tg_bot_key}/setWebhook?url=https://functions.yandexcloud.net/${yandex_function.cloud_func.id}"
 }
 
